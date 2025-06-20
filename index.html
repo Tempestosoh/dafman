@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dafman - Twitch Streamer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://unpkg.com/three@0.152.2/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
+    <style>
+        :root {
+            --bg-dark: #0f0f0f;
+            --text-dark: #f1f1f1;
+            --accent: #7a5cff;
+            --pink: #ff4fe0;
+        }
+
+        body {
+            background: var(--bg-dark);
+            color: var(--text-dark);
+            font-family: 'Outfit', sans-serif;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: #1a1a1a;
+            border-bottom: 1px solid #333;
+            position: relative;
+            z-index: 10;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo-container img {
+            width: 32px;
+            height: 32px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .nav-links {
+            display: flex;
+        }
+
+        .nav-links a {
+            margin-left: 1.5rem;
+            text-decoration: none;
+            color: inherit;
+            font-weight: 500;
+            transition: 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .hamburger span {
+            display: block;
+            width: 25px;
+            height: 3px;
+            background: #fff;
+            border-radius: 3px;
+        }
+
+        @media(max-width:768px) {
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                flex-direction: column;
+                background: #1a1a1a;
+                padding: 1rem 2rem;
+            }
+
+            .nav-links.nav-active {
+                display: flex;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+        }
+
+        header {
+            position: relative;
+            padding: 6rem 2rem 1rem;
+            text-align: center;
+            z-index: 1;
+        }
+
+        #bg-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            pointer-events: none;
+            z-index: 0;
+            /* altezza da JS */
+        }
+
+
+        .title {
+            font-size: 3rem;
+            font-weight: 800;
+            position: relative;
+        }
+
+        .highlight {
+            color: var(--accent);
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+            /* aggiunto */
+        }
+
+        .description {
+            max-width: 600px;
+            margin: 1rem auto;
+            opacity: 0.8;
+            text-align: center;
+            /* centra il testo dentro il blocco */
+        }
+
+
+
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 2rem;
+            border-radius: 2rem;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #fff;
+            background: var(--accent);
+            text-decoration: none;
+            transition: 0.3s;
+            margin-top: 1rem;
+        }
+
+        .cta-button:hover {
+            background: var(--pink);
+        }
+
+        .separator {
+            height: 2px;
+            background: #333;
+            margin: 3.5rem 0 3.5rem;
+            width: 100%;
+            position: relative;
+            z-index: 2;
+        }
+
+
+        .stats,
+        .social-section,
+        .schedule {
+            position: relative;
+            z-index: 2;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 0 2rem 2rem;
+            background: #1a1a1a;
+            padding: 1.5rem;
+            border-radius: 1rem;
+        }
+
+        .stat-box {
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+
+        .social-section {
+            margin: 3rem 2rem;
+            text-align: center;
+        }
+
+        .social-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .social-card {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 1rem;
+            padding: 1.5rem;
+        }
+
+        .social-card a {
+            color: var(--accent);
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .social-card p {
+            margin-top: 0.5rem;
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+
+        .schedule {
+            margin: 4rem 2rem;
+            padding: 2rem;
+            background: #1a1a1a;
+            border-radius: 1rem;
+            text-align: center;
+        }
+
+        .schedule-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .day {
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 0.75rem;
+            padding: 1rem 1.5rem;
+            min-width: 150px;
+            color: var(--text-dark);
+        }
+
+        .day strong {
+            display: block;
+            font-size: 1.2rem;
+            margin-bottom: 0.25rem;
+            color: var(--accent);
+        }
+
+        footer {
+            text-align: center;
+            font-size: 0.8rem;
+            color: #666;
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <div class="logo-container">
+            <img src="https://static-cdn.jtvnw.net/jtv_user_pictures/b161a187-2b81-4d01-be15-39e6869a6c5f-profile_image-70x70.png" alt="Logo">
+            <div class="logo">Dafman</div>
+        </div>
+        <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+        <div class="nav-links" id="nav-links">
+            <a href="#">Home</a>
+            <a href="#stats">Statistiche</a>
+            <a href="#social">Social</a>
+            <a href="#schedule">Live</a>
+            <a href="#contatti">Contatti</a>
+        </div>
+    </nav>
+
+    <header>
+        <canvas id="bg-canvas"></canvas>
+        <div class="title">Ciao, sono <span class="highlight">Dafman</span>.</div>
+        <div class="subtitle">e sono un <span class="highlight"><span id="typed-text"></span></span></div>
+        <p class="description">Ho 24 anni, amo streammare, chiacchierare con la community e giocare. Unisciti anche tu!</p>
+        <a href="https://twitch.tv/dafmanhd" class="cta-button" target="_blank">Seguimi su Twitch</a>
+        <div class="separator"></div>
+    </header>
+
+    <section class="stats" id="stats">
+        <div class="stat-box">
+            <div class="stat-value">12k+</div>
+            <div class="stat-label">Follower su Twitch</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-value">20+</div>
+            <div class="stat-label">Video su YouTube</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-value">50+</div>
+            <div class="stat-label">Utenti su Discord</div>
+        </div>
+    </section>
+
+    <section class="social-section" id="social">
+        <h2>I miei Social</h2>
+        <div class="social-grid">
+            <div class="social-card"><a href="https://twitch.tv/dafman" target="_blank">Twitch</a>
+                <p>Segui le mie live in diretta ogni settimana!</p>
+            </div>
+            <div class="social-card"><a href="https://youtube.com/@dafman" target="_blank">YouTube</a>
+                <p>Guarda i migliori momenti e contenuti esclusivi.</p>
+            </div>
+            <div class="social-card"><a href="https://discord.gg/tuolink" target="_blank">Discord</a>
+                <p>Unisciti alla community e partecipa alle chat.</p>
+            </div>
+            <div class="social-card"><a href="https://instagram.com/dafman" target="_blank">Instagram</a>
+                <p>Dietro le quinte e aggiornamenti quotidiani.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="schedule" id="schedule">
+        <h2>Orari delle Live</h2>
+        <div class="schedule-grid">
+            <div class="day"><strong>Lunedì - Venerdì</strong>21:30</div>
+            <div class="day"><strong>Sabato</strong>No stream</div>
+            <div class="day"><strong>Domenica</strong>21:30</div>
+        </div>
+        <p style="margin-top:1.5rem;color:#888">In diretta da Milano, Italia 🇮🇹</p>
+    </section>
+
+    <footer>&copy; 2025 Dafman. Tutti i diritti riservati.</footer>
+
+    <script>
+        const hamburger = document.getElementById("hamburger");
+        const navLinks = document.getElementById("nav-links");
+        hamburger.addEventListener("click", () => {
+            navLinks.classList.toggle("nav-active");
+            hamburger.classList.toggle("active");
+        });
+
+        gsap.from("header .title, header .subtitle, header .description", {
+            opacity: 0,
+            y: 30,
+            stagger: 0.2,
+            duration: 1,
+            ease: "power3.out"
+        });
+
+        new Typed("#typed-text", {
+            strings: ["streamer", "content creator", "editor", "gamer professionista", "Italian boy"],
+            typeSpeed: 60,
+            backSpeed: 30,
+            backDelay: 1500,
+            loop: true
+        });
+
+        const canvas = document.getElementById("bg-canvas");
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / 500, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({
+            canvas,
+            alpha: true
+        });
+        renderer.setSize(window.innerWidth, 500);
+        camera.updateProjectionMatrix();
+
+        const geometry = new THREE.BufferGeometry();
+        const particleCount = 500;
+        const positions = new Float32Array(particleCount * 3);
+        for (let i = 0; i < particleCount * 3; i++) {
+            positions[i] = (Math.random() - 0.5) * 20;
+        }
+
+        geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+        const material = new THREE.PointsMaterial({
+            color: 0x7a5cff,
+            size: 0.04
+        });
+        const points = new THREE.Points(geometry, material);
+        scene.add(points);
+        camera.position.z = 5;
+
+        function animate() {
+            requestAnimationFrame(animate);
+            points.rotation.y += 0.001;
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener("resize", () => {
+            camera.aspect = window.innerWidth / 500;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, 500);
+        });
+
+        function resizeCanvasToSeparator() {
+            const separator = document.querySelector('.separator');
+            const canvas = document.getElementById('bg-canvas');
+
+            // Prendo la distanza dal top della pagina fino alla linea
+            const separatorRect = separator.getBoundingClientRect();
+            const scrollTop = window.scrollY || window.pageYOffset;
+            const separatorOffsetTop = separatorRect.top + scrollTop;
+
+            // Altezza da assegnare al canvas: distanza dal top del viewport fino alla linea
+            // Oppure considera l'offset del canvas rispetto al body per calcolare correttamente l'altezza
+
+            // Prendiamo la distanza tra il top dell'header e la linea, perché canvas è posizionato assoluto dentro header
+            const header = document.querySelector('header');
+            const headerRect = header.getBoundingClientRect();
+            const headerOffsetTop = headerRect.top + scrollTop;
+
+            const height = separatorOffsetTop - headerOffsetTop;
+
+            // Imposto l'altezza del canvas
+            canvas.style.height = height + 'px';
+
+            // Imposto anche la dimensione del renderer Three.js
+            renderer.setSize(window.innerWidth, height);
+            camera.aspect = window.innerWidth / height;
+            camera.updateProjectionMatrix();
+        }
+
+        window.addEventListener('load', resizeCanvasToSeparator);
+        window.addEventListener('resize', resizeCanvasToSeparator);
+    </script>
+</body>
+
+</html>
