@@ -286,42 +286,30 @@
             margin-bottom: 2rem;
         }
     
-    /* Preloader */
-    #preloader {
-      position: fixed;
-      top: 0;
-      left: 0;
-      height: 100vh;
-      width: 100%;
-      background: #0f0f0f;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-      transition: opacity 0.5s ease;
-    }
-    #preloader img {
-      width: 100px;
-      animation: pulse 1.5s infinite ease-in-out;
-    }
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.1); opacity: 0.7; }
-    }
-    .fade-out {
-      opacity: 0;
-      pointer-events: none;
-    }
-    .stat-box, .social-card, .day {
-      opacity: 0;
-      transform: translateY(30px);
-    }
+#preloader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100%;
+  background: #0f0f0f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  transition: opacity 0.5s ease;
+}
+.fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+.stat-box, .social-card, .day {
+  opacity: 0;
+  transform: translateY(30px);
+}
 </style>
 </link></head>
-<body>
-<div id="preloader">
-<img alt="Caricamento" src="https://i.imgur.com/vFeb9zH.png"/>
-<br/><p style="color:white;margin-top:3.5rem;font-size:1.2rem;">Caricamento...</p></div>
+<body><div id="preloader"><div style="display:flex;flex-direction:column;align-items:center;text-align:center;"><img alt="Caricamento" src="https://i.imgur.com/vFeb9zH.png" style="width:100px;"/><p style="color:white;margin-top:2rem;font-size:1.2rem;">Caricamento...</p></div></div>
 <nav>
 <div class="logo-container">
 <img alt="Logo" src="https://i.imgur.com/vFeb9zH.png"/>
@@ -484,40 +472,39 @@
         window.addEventListener('load', resizeCanvasToSeparator);
         window.addEventListener('resize', resizeCanvasToSeparator);
     </script>
-<script>
-  window.addEventListener("load", () => {
-    const preloader = document.getElementById("preloader");
-    preloader.classList.add("fade-out");
-    setTimeout(() => preloader.remove(), 500);
-
-    gsap.to(".stat-box", {
-      opacity: 1,
-      y: 0,
-      stagger: 0.2,
-      duration: 1,
-      ease: "power3.out"
-    });
-
-    gsap.to(".social-card", {
-      opacity: 1,
-      y: 0,
-      stagger: 0.2,
-      delay: 0.5,
-      duration: 1,
-      ease: "power3.out"
-    });
-
-    gsap.to(".day", {
-      opacity: 1,
-      y: 0,
-      stagger: 0.2,
-      delay: 0.7,
-      duration: 1,
-      ease: "power3.out"
-    });
-  });
-</script>
 </footer></footer><script>
+window.addEventListener("load", () => {
+  const preloader = document.getElementById("preloader");
+  preloader.classList.add("fade-out");
+  setTimeout(() => preloader.remove(), 500);
+
+  gsap.to(".stat-box", {
+    opacity: 1,
+    y: 0,
+    stagger: 0.2,
+    duration: 1,
+    ease: "power3.out"
+  });
+
+  gsap.to(".social-card", {
+    opacity: 1,
+    y: 0,
+    stagger: 0.2,
+    delay: 0.5,
+    duration: 1,
+    ease: "power3.out"
+  });
+
+  gsap.to(".day", {
+    opacity: 1,
+    y: 0,
+    stagger: 0.2,
+    delay: 0.7,
+    duration: 1,
+    ease: "power3.out"
+  });
+});
+
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   anchor.addEventListener('click', function (e) {
     e.preventDefault();
@@ -526,16 +513,32 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
   });
 });
-</script>
-<button id="backToTop" style="display:none;position:fixed;bottom:40px;right:40px;z-index:999;background:#7a5cff;border:none;border-radius:50%;width:50px;height:50px;color:white;font-size:20px;cursor:pointer;" title="Torna su">↑</button>
-<script>
-  const backToTop = document.getElementById("backToTop");
-  window.addEventListener("scroll", () => {
-    backToTop.style.display = window.scrollY > 300 ? "block" : "none";
-  });
-  backToTop.addEventListener("click", () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  });
-</script>
-</body>
+
+const backToTop = document.createElement("button");
+backToTop.id = "backToTop";
+backToTop.innerText = "↑";
+backToTop.title = "Torna su";
+Object.assign(backToTop.style, {
+  display: "none",
+  position: "fixed",
+  bottom: "40px",
+  right: "40px",
+  zIndex: "999",
+  background: "#7a5cff",
+  border: "none",
+  borderRadius: "50%",
+  width: "50px",
+  height: "50px",
+  color: "white",
+  fontSize: "20px",
+  cursor: "pointer"
+});
+document.body.appendChild(backToTop);
+window.addEventListener("scroll", () => {
+  backToTop.style.display = window.scrollY > 300 ? "block" : "none";
+});
+backToTop.addEventListener("click", () => {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
+</script></body>
 </html>
