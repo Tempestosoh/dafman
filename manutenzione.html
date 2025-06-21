@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manutenzione - Dafman</title>
+  <link rel="icon" href="https://i.imgur.com/vFeb9zH.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/three@0.152.2/build/three.min.js"></script>
+  <style>
+    :root {
+      --bg-dark: #0f0f0f;
+      --text-dark: #f1f1f1;
+      --accent: #7a5cff;
+      --pink: #ff4fe0;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg-dark);
+      color: var(--text-dark);
+      font-family: 'Outfit', sans-serif;
+      overflow: hidden;
+    }
+
+    #bg-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .content {
+      position: relative;
+      z-index: 1;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      color: var(--accent);
+      margin-bottom: 1rem;
+    }
+
+    p {
+      font-size: 1.2rem;
+      max-width: 500px;
+      opacity: 0.8;
+    }
+
+    .logo {
+      margin-bottom: 2rem;
+    }
+
+    .logo img {
+      width: 90px;
+      border-radius: 12px;
+      box-shadow: 0 0 12px var(--accent);
+    }
+  </style>
+</head>
+<body>
+  <canvas id="bg-canvas"></canvas>
+
+  <div class="content">
+    <div class="logo">
+      <img src="https://i.imgur.com/vFeb9zH.png" alt="Logo Dafman" />
+    </div>
+    <h1>🔧 Sito in Manutenzione</h1>
+    <p>Stiamo lavorando per migliorare l’esperienza! Torna a trovarci tra poco.<br>Il sito sarà di nuovo online al più presto.</p>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("bg-canvas");
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    camera.position.z = 5;
+
+    const geometry = new THREE.BufferGeometry();
+    const particleCount = 500;
+    const positions = new Float32Array(particleCount * 3);
+    for (let i = 0; i < particleCount * 3; i++) {
+      positions[i] = (Math.random() - 0.5) * 20;
+    }
+
+    geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+    const material = new THREE.PointsMaterial({ color: 0x7a5cff, size: 0.04 });
+    const points = new THREE.Points(geometry, material);
+    scene.add(points);
+
+    function animate() {
+      requestAnimationFrame(animate);
+      points.rotation.y += 0.0008;
+      points.rotation.x += 0.0004;
+      renderer.render(scene, camera);
+    }
+
+    animate();
+
+    window.addEventListener("resize", () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  </script>
+</body>
+</html>
